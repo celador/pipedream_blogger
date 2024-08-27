@@ -1,5 +1,7 @@
 from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
+from exa_py import Exa
+import time
 
 # Uncomment the following line to use an example of a custom tool
 # from pipedream_blogger.tools.custom_tool import MyCustomTool
@@ -12,30 +14,134 @@ from crewai_tools import (
     WebsiteSearchTool, # Pipedream Website Search Tool
     CodeDocsSearchTool, # Docs Search Tool
     SerperDevTool, # General Search Tool
+		EXASearchTool,
+	  DallETool,
 )
 
-website_urls = [
-    "https://pipedream.com/support",
-    "https://pipedream.com/terms",
-    "https://pipedream.com/privacy",
-    "https://pipedream.com/sla",
-    "https://pipedream.com/dpa",
-    "https://pipedream.com/affiliates",
-		"https://pipedream.com/blog/page/1",
-		"https://pipedream.com/blog/page/2",
-		"https://pipedream.com/blog/page/3",
-		"https://pipedream.com/blog/page/4",
+# Initialize the tool for internet searching capabilities
+exa_client = EXASearchTool()
+
+blog_urls_1 = [
+	'https://pipedream.com/blog/2fa/',
+	'https://pipedream.com/blog/add-preview-screenshots-to-gitlab-merge-requests-with-browserless/',
+	'https://pipedream.com/blog/adding-a-contact-form-to-next-js-on-vercel/',
+	'https://pipedream.com/blog/adding-background-jobs-to-next-js-with-qstash/',
+	'https://pipedream.com/blog/ai-driven-smoke-tests/',
+	'https://pipedream.com/blog/airtable-as-an-approval-queue-with-pipedream/',
+	'https://pipedream.com/blog/archiving-slack-threads-to-discourse-with-gpt-3/',
 ]
 
-# google_search = SerperDevTool()
+blog_urls_2 = [
+	'https://pipedream.com/blog/automate-a-weekly-new-twitter-followers-shoutout-with-pipedream/',
+	'https://pipedream.com/blog/automate-customer-support-with-dialogflow/',
+	'https://pipedream.com/blog/avoiding-parking-tickets-with-pipedream/',
+	'https://pipedream.com/blog/bring-your-own-oauth-clients/',
+	'https://pipedream.com/blog/build-a-slack-slash-command-in-less-than-10-minutes/',
+	'https://pipedream.com/blog/build-a-youtube-channel-connected-slack-bot/',
+	'https://pipedream.com/blog/build-workflows-faster-with-ai/',
+	'https://pipedream.com/blog/build-your-own-chat-bot-with-openai-and-pipedream/',
+	'https://pipedream.com/blog/building-a-custom-pipedream-action-component-with-gitpod/',
+	'https://pipedream.com/blog/classifying-bug-reports-with-chatgpt/',
+	'https://pipedream.com/blog/command-your-telegram-bot-with-pipedream/',
+	'https://pipedream.com/blog/commit-your-dev-to-articles-to-github/',
+	'https://pipedream.com/blog/concurrency-controls-design/',
+	'https://pipedream.com/blog/connect-a-webflow-form-to-an-airtable/',
+	'https://pipedream.com/blog/connecting-your-user-accounts-to-pipedream/',
+	'https://pipedream.com/blog/creating-an-out-of-office-reminder-system/',
+	'https://pipedream.com/blog/creating-workflows-programmatically/',
+	'https://pipedream.com/blog/devreleng/',
+	'https://pipedream.com/blog/eliminate-cold-starts-with-warm-workers/',
+	'https://pipedream.com/blog/export-axios-response-data-from-a-loop/',
+	'https://pipedream.com/blog/export-insomnia-to-bruno/',
+	'https://pipedream.com/blog/file-stores-live-demo-recap-and-workflows/',
+	'https://pipedream.com/blog/filestores/',
+	'https://pipedream.com/blog/github-sync/',
+	'https://pipedream.com/blog/graphql-requests-with-node-js/',
+	'https://pipedream.com/blog/hippa/',
+	'https://pipedream.com/blog/how-to-build-a-bot-to-download-the-latest-r-gifs-posts-on-reddit/',
+	'https://pipedream.com/blog/how-to-connect-to-and-insert-data-into-supabase-with-pipedream/',
+	'https://pipedream.com/blog/how-to-retrieve-data-from-apis-using-pagination/',
+	'https://pipedream.com/blog/how-to-sending-messages-to-a-channel-with-a-discord-bot/',
+	'https://pipedream.com/blog/http-api-for-latest-wuhan-coronavirus-data-2019-ncov/',
+	'https://pipedream.com/blog/introducing-one-second-cron-jobs/',
+	'https://pipedream.com/blog/introducing-the-pipedream-source-available-license/',
+	'https://pipedream.com/blog/log-workflow-errors-to-aws-cloudwatch/',
+	'https://pipedream.com/blog/managing-access-to-your-projects-and-secrets/',
+]
+
+blog_urls_3 = [
+	'https://pipedream.com/blog/meet-the-new-event-history/',
+	'https://pipedream.com/blog/node18/',
+	'https://pipedream.com/blog/openai-integrations-live-demo-recap-workflows/',
+	'https://pipedream.com/blog/page/2#/portal',
+	'https://pipedream.com/blog/parse-multi-part-form-data-using/',
+	'https://pipedream.com/blog/performing-shopify-bulk-operations-in-one-workflow-with-flow-rerun/',
+	'https://pipedream.com/blog/pipedream-customer-facing-integration-prototypes/',
+	'https://pipedream.com/blog/pipedream-plus-snowflake-for-data-observability/',
+	'https://pipedream.com/blog/pipedream-potent-serverless-capabilities/',
+	'https://pipedream.com/blog/pipedream-unaffected-by-log4shell/',
+	'https://pipedream.com/blog/pipedreams-affiliate-program/',
+	'https://pipedream.com/blog/post-mortem-on-our-2-13-aws-incident/',
+	'https://pipedream.com/blog/private-connected-accounts/',
+	'https://pipedream.com/blog/publish-notion-pages-as-blog-posts/',
+	'https://pipedream.com/blog/puppeteer-and-playwright/',
+	'https://pipedream.com/blog/real-time-data-check-notifications-with-mongodb/',
+	'https://pipedream.com/blog/real-time-notifications-on-x-keywords/',
+	'https://pipedream.com/blog/reducing-churn-with-stripe-and-chatgpt/',
+	'https://pipedream.com/blog/reindex-algolia-on-github-releases/',
+	'https://pipedream.com/blog/requestbin-events-api/',
+	'https://pipedream.com/blog/return-a-plain-text-response-from-a-workflow/',
+]
+
+blog_urls_4 = [
+	'https://pipedream.com/blog/run-and-monitor-production-systems-on-pipedream/',
+	'https://pipedream.com/blog/scale-your-automotive-business-with-parseur-and-pipedream/',
+	'https://pipedream.com/blog/scraping-discourse-with-a-custom-pipedream-source/',
+	'https://pipedream.com/blog/scraping-market-data-with-python/',
+	'https://pipedream.com/blog/scraping-url-metadata-with-an-npm-package-in-a-node-js-code-step/',
+	'https://pipedream.com/blog/send-a-tweet-whenever-a-new-blog-post-is-published-on-ghost/',
+	'https://pipedream.com/blog/send-delayed-welcome-emails-to-new-users-with-postmark/',
+	'https://pipedream.com/blog/send-promotion-emails-with-shopify-orders-at-random/',
+	'https://pipedream.com/blog/series-a-financing/',
+	'https://pipedream.com/blog/set-up-shopify-gdpr-webhooks-without-code/',
+	'https://pipedream.com/blog/sharp-js-compatibility/',
+	'https://pipedream.com/blog/shopify-app-install-notifications-to-slack-without-code/',
+	'https://pipedream.com/blog/shopify-partner-transactions-counter/',
+	'https://pipedream.com/blog/shutting-down-the-sql-service/',
+	'https://pipedream.com/blog/support-for-openai-vision-assistants-and-more/',
+	'https://pipedream.com/blog/the-simplest-way-to-run-node-code-on-a-schedule/',
+	'https://pipedream.com/blog/trigger-a-pipedream-workflow-from-an-airtable-base-button/',
+	'https://pipedream.com/blog/unlocking-poetic-possibilities-using-gpt-3-to-create-a-bot-that-transforms-tweets-into-poetry-no-coding-experience-necessary/',
+	'https://pipedream.com/blog/use-any-api-in-seconds-with-auth-managed-by-pipedream/',
+	'https://pipedream.com/blog/using-airtable-as-a-database-with-next-js/',
+	'https://pipedream.com/blog/using-the-new-openai-actions-in-pipedream/',
+	'https://pipedream.com/blog/verify-woocommerce-orders-with-sms-codes-with-fraudlabs-pro/',
+	'https://pipedream.com/blog/what-is-json/',
+	'https://pipedream.com/blog/workflows-are-now-shareable/',
+	'https://pipedream.com/blog/workspaces-inviting-team-members/',
+	'https://pipedream.com/blog/write-nodejs-using-lodash-on-pipedream/',
+]
+
+website_urls = [
+	"https://pipedream.com/support",
+	"https://pipedream.com/terms",
+	"https://pipedream.com/privacy",
+	"https://pipedream.com/sla",
+	"https://pipedream.com/dpa",
+]
+
+google_search = SerperDevTool()
 
 yc_search = WebsiteSearchTool(website='https://news.ycombinator.com')
-pipedream_search = WebsiteSearchTool(website='https://pipedream.com')
 # create an array of website search tools for each of the website_urls
-pipedream_searchers = [WebsiteSearchTool(website=url) for url in website_urls]
+
+pipedream_searchers = []
+
+for url in [*blog_urls_1, *blog_urls_2, *blog_urls_3, *blog_urls_4, *website_urls]:
+    pipedream_searchers.append(WebsiteSearchTool(website=url))
+    time.sleep(0.1)  # Sleep for 1 second between initializing each searcher
 
 docs_search = CodeDocsSearchTool(docs_url='https://pipedream.com/docs')
-blog_search = CodeDocsSearchTool(docs_url='https://pipedream.com/blog')
 
 @CrewBase
 class PipedreamBloggerCrew():
@@ -48,7 +154,7 @@ class PipedreamBloggerCrew():
 		return Agent(
 			config=self.agents_config['researcher'],
 			# tools=[MyCustomTool()], # Example of custom tool, loaded on the beginning of file
-			tools=[yc_search],
+			tools=[exa_client, yc_search],
 			verbose=True
 		)
 
@@ -56,15 +162,15 @@ class PipedreamBloggerCrew():
 	def pipedream_expert(self) -> Agent:
 		return Agent(
 			config=self.agents_config['pipedream_expert'],
-			tools=[pipedream_search, docs_search, blog_search, *pipedream_searchers],
+			tools=[docs_search, *pipedream_searchers],
 			verbose=True
 		)
 
 	@agent
-	def reporting_analyst(self) -> Agent:
+	def blog_writer(self) -> Agent:
 		return Agent(
-			config=self.agents_config['reporting_analyst'],
-			tools=[pipedream_search, docs_search, blog_search, *pipedream_searchers],
+			config=self.agents_config['blog_writer'],
+			tools=[google_search, exa_client, docs_search, *pipedream_searchers, DallETool()],
 			verbose=True
 		)
 
@@ -81,10 +187,10 @@ class PipedreamBloggerCrew():
 		)
 
 	@task
-	def reporting_task(self) -> Task:
+	def writing_task(self) -> Task:
 		return Task(
-			config=self.tasks_config['reporting_task'],
-			output_file='report.md'
+			config=self.tasks_config['writing_task'],
+			output_file='output/report.md'
 		)
 
 	@crew

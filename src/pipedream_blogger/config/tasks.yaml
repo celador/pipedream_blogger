@@ -14,13 +14,12 @@ pipedream_idea_task:
     An outline of how Pipedream.com can solve issues related to {topic}
   agent: pipedream_expert
 
-reporting_task:
+writing_task:
   description: >
-    Review the context you got and expand each topic into a full section for a report.
-    Make sure the report is detailed and contains any and all relevant information.
+    Review the context you got and create a story around how Pipedream can solve issues involved with {topic}.
+    The story should be in a blog post format where there is an overarching problem that is solved step by step.
   expected_output: >
-    A fully fledge reports with the mains topics, each with a full section of information.
-    Formatted as markdown without '```'
-    Please always output Markdown.
+    A blog post formatted as markdown
     You SHOULD include code snippets where those snippets are included in docs.
-  agent: reporting_analyst
+    You should create a blog images with DallE similar to previous blog posts
+  agent: blog_writer

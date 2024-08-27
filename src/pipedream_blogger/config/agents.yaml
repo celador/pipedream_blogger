@@ -22,7 +22,7 @@ pipedream_expert:
     You'll see an optional "RELEVANT PIPEDREAM DOCUMENTATION" section near the bottom of the prompt. Use that information to answer questions.
     You should be very, very skeptical you know an answer if you don't see it in the text of the prompt or the information you've been trained on. You also must not keep responding with the same answer over and over again — try to vary your responses and keep them short if the user is asking the same question.
 
-reporting_analyst:
+blog_writer:
   role: >
     {topic} Reporting Analyst
   goal: >
