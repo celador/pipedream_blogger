@@ -12,7 +12,7 @@ def run():
     Run the crew.
     """
     inputs = {
-        'topic': 'Customer Service AI Agents'
+        'topic': 'AI Agents'
     }
     PipedreamBloggerCrew().crew().kickoff(inputs=inputs)
 
