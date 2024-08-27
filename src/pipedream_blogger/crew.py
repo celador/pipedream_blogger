@@ -27,7 +27,7 @@ website_urls = [
 		"https://pipedream.com/blog/page/4",
 ]
 
-google_search = SerperDevTool()
+# google_search = SerperDevTool()
 
 yc_search = WebsiteSearchTool(website='https://news.ycombinator.com')
 pipedream_search = WebsiteSearchTool(website='https://pipedream.com')
@@ -48,7 +48,7 @@ class PipedreamBloggerCrew():
 		return Agent(
 			config=self.agents_config['researcher'],
 			# tools=[MyCustomTool()], # Example of custom tool, loaded on the beginning of file
-			tools=[google_search, yc_search],
+			tools=[yc_search],
 			verbose=True
 		)
 
@@ -64,7 +64,7 @@ class PipedreamBloggerCrew():
 	def reporting_analyst(self) -> Agent:
 		return Agent(
 			config=self.agents_config['reporting_analyst'],
-			tools=[google_search, pipedream_search, docs_search, blog_search, *pipedream_searchers],
+			tools=[pipedream_search, docs_search, blog_search, *pipedream_searchers],
 			verbose=True
 		)
 
@@ -94,6 +94,7 @@ class PipedreamBloggerCrew():
 			agents=self.agents, # Automatically created by the @agent decorator
 			tasks=self.tasks, # Automatically created by the @task decorator
 			process=Process.sequential,
+			memory=True,
 			verbose=True,
 			# process=Process.hierarchical, # In case you wanna use that instead https://docs.crewai.com/how-to/Hierarchical/
 		)
