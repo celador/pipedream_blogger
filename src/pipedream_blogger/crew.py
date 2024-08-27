@@ -12,14 +12,7 @@ from crewai_tools import (
     WebsiteSearchTool, # Pipedream Website Search Tool
     CodeDocsSearchTool, # Docs Search Tool
     SerperDevTool, # General Search Tool
-    GithubSearchTool, # Github Search Tool
 )
-
-# pipedream_repo_search = GithubSearchTool(
-#     github_repo='https://github.com/pipedreamhq/pipedream',
-#     content_types=['code', 'issue'], # Options: code, repo, pr, issue
-#     gh_token="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",
-# )
 
 website_urls = [
     "https://pipedream.com/support",
