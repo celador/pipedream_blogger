@@ -12,7 +12,7 @@ def run():
     Run the crew.
     """
     inputs = {
-        'topic': 'Pipedream.com AI Agents'
+        'topic': 'AI Agent Workflows'
     }
     PipedreamBloggerCrew().crew().kickoff(inputs=inputs)
 
@@ -22,7 +22,7 @@ def train():
     Train the crew for a given number of iterations.
     """
     inputs = {
-        "topic": "Pipedream.com AI Agents"
+        "topic": "AI Agent Workflows"
     }
     try:
         PipedreamBloggerCrew().crew().train(n_iterations=int(sys.argv[1]), filename=sys.argv[2], inputs=inputs)
@@ -45,7 +45,7 @@ def test():
     Test the crew execution and returns the results.
     """
     inputs = {
-        "Pipedream.com AI Agents"
+        "AI Agent Workflows"
     }
     try:
         PipedreamBloggerCrew().crew().test(n_iterations=int(sys.argv[1]), openai_model_name=sys.argv[2], inputs=inputs)

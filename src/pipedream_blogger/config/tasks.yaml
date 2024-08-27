@@ -7,6 +7,13 @@ research_task:
     A list with 10 bullet points of the most relevant information about {topic}
   agent: researcher
 
+pipedream_idea_task:
+  description: >
+    Conduct a thorough research on the Pipedream.com websites about {topic}
+  expected_output: >
+    An outline of how Pipedream.com can solve issues related to {topic}
+  agent: pipedream_expert
+
 reporting_task:
   description: >
     Review the context you got and expand each topic into a full section for a report.
@@ -14,4 +21,6 @@ reporting_task:
   expected_output: >
     A fully fledge reports with the mains topics, each with a full section of information.
     Formatted as markdown without '```'
+    Please always output Markdown.
+    You SHOULD include code snippets where those snippets are included in docs.
   agent: reporting_analyst

@@ -28,21 +28,21 @@ website_urls = [
     "https://pipedream.com/sla",
     "https://pipedream.com/dpa",
     "https://pipedream.com/affiliates",
-    "https://pipedream.com/blog"
+		"https://pipedream.com/blog/page/1",
+		"https://pipedream.com/blog/page/2",
+		"https://pipedream.com/blog/page/3",
+		"https://pipedream.com/blog/page/4",
 ]
 
 google_search = SerperDevTool()
 
+yc_search = WebsiteSearchTool(website='https://news.ycombinator.com')
 pipedream_search = WebsiteSearchTool(website='https://pipedream.com')
 # create an array of website search tools for each of the website_urls
 pipedream_searchers = [WebsiteSearchTool(website=url) for url in website_urls]
 
-
-docs_urls = [
-  "https://pipedream.com/docs/"
-]
-
 docs_search = CodeDocsSearchTool(docs_url='https://pipedream.com/docs')
+blog_search = CodeDocsSearchTool(docs_url='https://pipedream.com/blog')
 
 @CrewBase
 class PipedreamBloggerCrew():
@@ -55,7 +55,15 @@ class PipedreamBloggerCrew():
 		return Agent(
 			config=self.agents_config['researcher'],
 			# tools=[MyCustomTool()], # Example of custom tool, loaded on the beginning of file
-			tools=[google_search, pipedream_search, docs_search] + pipedream_searchers,
+			tools=[google_search, yc_search],
+			verbose=True
+		)
+
+	@agent
+	def pipedream_expert(self) -> Agent:
+		return Agent(
+			config=self.agents_config['pipedream_expert'],
+			tools=[pipedream_search, docs_search, blog_search, *pipedream_searchers],
 			verbose=True
 		)
 
@@ -63,7 +71,7 @@ class PipedreamBloggerCrew():
 	def reporting_analyst(self) -> Agent:
 		return Agent(
 			config=self.agents_config['reporting_analyst'],
-			tools=[google_search, pipedream_search, docs_search] + pipedream_searchers,
+			tools=[google_search, pipedream_search, docs_search, blog_search, *pipedream_searchers],
 			verbose=True
 		)
 
@@ -71,6 +79,12 @@ class PipedreamBloggerCrew():
 	def research_task(self) -> Task:
 		return Task(
 			config=self.tasks_config['research_task'],
+		)
+
+	@task
+	def pipedream_idea_task(self) -> Task:
+		return Task(
+			config=self.tasks_config['pipedream_idea_task'],
 		)
 
 	@task
