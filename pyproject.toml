@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "pipedream_blogger"
+version = "0.1.0"
+description = "pipedream-blogger using crewAI"
+authors = ["Your Name <you@example.com>"]
+
+[tool.poetry.dependencies]
+python = ">=3.10,<=3.13"
+crewai = { extras = ["tools"], version = "^0.51.0" }
+
+[tool.poetry.scripts]
+pipedream_blogger = "pipedream_blogger.main:run"
+run_crew = "pipedream_blogger.main:run"
+train = "pipedream_blogger.main:train"
+replay = "pipedream_blogger.main:replay"
+test = "pipedream_blogger.main:test"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
