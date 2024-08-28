@@ -11,6 +11,7 @@ exa-py = "^1.0.18"
 
 [tool.poetry.scripts]
 pipedream_blogger = "pipedream_blogger.main:run"
+pipedream_support = "pipedream_support.main:run"
 run_crew = "pipedream_blogger.main:run"
 train = "pipedream_blogger.main:train"
 replay = "pipedream_blogger.main:replay"
