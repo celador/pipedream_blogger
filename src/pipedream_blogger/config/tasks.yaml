@@ -23,3 +23,10 @@ writing_task:
     You SHOULD include code snippets where those snippets are included in docs.
     You should create a blog images with DallE similar to previous blog posts
   agent: blog_writer
+
+http_task:
+  description: >
+    Send the output of the writing task to the Pipedream blog using the available http tool
+  expected_output: >
+    Confirmation that the data was sent successfully.
+  agent: http_sender

@@ -1,13 +1,13 @@
 from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
 from exa_py import Exa
+
 import time
 
 # Uncomment the following line to use an example of a custom tool
-# from pipedream_blogger.tools.custom_tool import MyCustomTool
+from pipedream_blogger.tools.blog_post_tool import BlogPostTool
+from pipedream_blogger.tools.format_tool import FormatTool
 
-# Check our tools documentations for more information on how to use them
-# from crewai_tools import SerperDevTool
 
 # Importing crewAI tools
 from crewai_tools import (
@@ -16,12 +16,15 @@ from crewai_tools import (
     SerperDevTool, # General Search Tool
 		EXASearchTool,
 	  DallETool,
+   	tool,
 )
 
 # Initialize the tool for internet searching capabilities
 exa_client = EXASearchTool()
 
-blog_urls_1 = [
+blog_post_tool = BlogPostTool()
+
+blog_urls = [
 	'https://pipedream.com/blog/2fa/',
 	'https://pipedream.com/blog/add-preview-screenshots-to-gitlab-merge-requests-with-browserless/',
 	'https://pipedream.com/blog/adding-a-contact-form-to-next-js-on-vercel/',
@@ -29,9 +32,6 @@ blog_urls_1 = [
 	'https://pipedream.com/blog/ai-driven-smoke-tests/',
 	'https://pipedream.com/blog/airtable-as-an-approval-queue-with-pipedream/',
 	'https://pipedream.com/blog/archiving-slack-threads-to-discourse-with-gpt-3/',
-]
-
-blog_urls_2 = [
 	'https://pipedream.com/blog/automate-a-weekly-new-twitter-followers-shoutout-with-pipedream/',
 	'https://pipedream.com/blog/automate-customer-support-with-dialogflow/',
 	'https://pipedream.com/blog/avoiding-parking-tickets-with-pipedream/',
@@ -67,9 +67,6 @@ blog_urls_2 = [
 	'https://pipedream.com/blog/introducing-the-pipedream-source-available-license/',
 	'https://pipedream.com/blog/log-workflow-errors-to-aws-cloudwatch/',
 	'https://pipedream.com/blog/managing-access-to-your-projects-and-secrets/',
-]
-
-blog_urls_3 = [
 	'https://pipedream.com/blog/meet-the-new-event-history/',
 	'https://pipedream.com/blog/node18/',
 	'https://pipedream.com/blog/openai-integrations-live-demo-recap-workflows/',
@@ -91,9 +88,6 @@ blog_urls_3 = [
 	'https://pipedream.com/blog/reindex-algolia-on-github-releases/',
 	'https://pipedream.com/blog/requestbin-events-api/',
 	'https://pipedream.com/blog/return-a-plain-text-response-from-a-workflow/',
-]
-
-blog_urls_4 = [
 	'https://pipedream.com/blog/run-and-monitor-production-systems-on-pipedream/',
 	'https://pipedream.com/blog/scale-your-automotive-business-with-parseur-and-pipedream/',
 	'https://pipedream.com/blog/scraping-discourse-with-a-custom-pipedream-source/',
@@ -137,7 +131,7 @@ yc_search = WebsiteSearchTool(website='https://news.ycombinator.com')
 
 pipedream_searchers = []
 
-for url in [*blog_urls_1, *blog_urls_2, *blog_urls_3, *blog_urls_4, *website_urls]:
+for url in [*blog_urls, *website_urls]:
     pipedream_searchers.append(WebsiteSearchTool(website=url))
     time.sleep(0.1)  # Sleep for 1 second between initializing each searcher
 
@@ -170,9 +164,18 @@ class PipedreamBloggerCrew():
 	def blog_writer(self) -> Agent:
 		return Agent(
 			config=self.agents_config['blog_writer'],
-			tools=[google_search, exa_client, docs_search, *pipedream_searchers, DallETool()],
+			tools=[google_search, exa_client, docs_search, *pipedream_searchers],
 			verbose=True
 		)
+
+	@agent
+	def http_sender(self) -> Agent:
+		return Agent(
+			config=self.agents_config['http_sender'],
+			tools=[blog_post_tool],
+			verbose=True,
+			memory=False,
+	)
 
 	@task
 	def research_task(self) -> Task:
@@ -190,8 +193,19 @@ class PipedreamBloggerCrew():
 	def writing_task(self) -> Task:
 		return Task(
 			config=self.tasks_config['writing_task'],
-			output_file='output/report.md'
+			tools=[FormatTool(result_as_answer=True)],
+			# output_file='output/report.md'
 		)
+
+	@task
+	def http_task(self) -> Task:
+		return Task(
+			config=self.tasks_config['http_task'],
+			input_mapping=lambda inputs: {
+				'title': inputs['title'],
+				'content': inputs['content'],
+			}
+	)
 
 	@crew
 	def crew(self) -> Crew:
@@ -202,5 +216,7 @@ class PipedreamBloggerCrew():
 			process=Process.sequential,
 			memory=True,
 			verbose=True,
+   		planning=True,
+			max_rpm="600"
 			# process=Process.hierarchical, # In case you wanna use that instead https://docs.crewai.com/how-to/Hierarchical/
 		)
