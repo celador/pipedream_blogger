@@ -1,0 +1,6 @@
+support_task:
+  description: >
+    Answer a user question about Pipedream.com
+  expected_output: >
+    An complete answer to the question, with code examples
+  agent: pipedream_support

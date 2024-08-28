@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import sys
-from pipedream_blogger.crew import PipedreamBloggerCrew
+from pipedream_support.crew import PipedreamSupportCrew
 
 # This main file is intended to be a way for your to run your
 # crew locally, so refrain from adding necessary logic into this file.
@@ -14,7 +14,7 @@ def run():
     inputs = {
         'topic': 'Building a Chatbot with OpenAI',
     }
-    PipedreamBloggerCrew().crew().kickoff(inputs=inputs)
+    PipedreamSupportCrew().crew().kickoff(inputs=inputs)
 
 
 def train():
@@ -25,7 +25,7 @@ def train():
         "topic": "Building a Chatbot with OpenAI"
     }
     try:
-        PipedreamBloggerCrew().crew().train(n_iterations=int(sys.argv[1]), filename=sys.argv[2], inputs=inputs)
+        PipedreamSupportCrew().crew().train(n_iterations=int(sys.argv[1]), filename=sys.argv[2], inputs=inputs)
 
     except Exception as e:
         raise Exception(f"An error occurred while training the crew: {e}")
@@ -35,7 +35,7 @@ def replay():
     Replay the crew execution from a specific task.
     """
     try:
-        PipedreamBloggerCrew().crew().replay(task_id=sys.argv[1])
+        PipedreamSupportCrew().crew().replay(task_id=sys.argv[1])
 
     except Exception as e:
         raise Exception(f"An error occurred while replaying the crew: {e}")
@@ -48,7 +48,7 @@ def test():
         "Building a Chatbot with OpenAI"
     }
     try:
-        PipedreamBloggerCrew().crew().test(n_iterations=int(sys.argv[1]), openai_model_name=sys.argv[2], inputs=inputs)
+        PipedreamSupportCrew().crew().test(n_iterations=int(sys.argv[1]), openai_model_name=sys.argv[2], inputs=inputs)
 
     except Exception as e:
         raise Exception(f"An error occurred while replaying the crew: {e}")
