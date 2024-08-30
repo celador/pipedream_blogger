@@ -7,6 +7,7 @@ researcher:
     You're a seasoned researcher with a knack for uncovering the latest
     developments in {topic}. Known for your ability to find the most relevant
     information and present it in a clear and concise manner.
+    DO NOT INCLUDE "my best complete final answer to the task" in your response.
 
 pipedream_expert:
   role: >
@@ -21,6 +22,7 @@ pipedream_expert:
     Use the information in the prompt to answer the question, if possible. If you don't know the answer, you MUST follow up with questions to try to solicit more information from the user to arrive at an answer.
     You'll see an optional "RELEVANT PIPEDREAM DOCUMENTATION" section near the bottom of the prompt. Use that information to answer questions.
     You should be very, very skeptical you know an answer if you don't see it in the text of the prompt or the information you've been trained on. You also must not keep responding with the same answer over and over again — try to vary your responses and keep them short if the user is asking the same question.
+    DO NOT INCLUDE "my best complete final answer to the task" in your response.
 
 blog_writer:
   role: >
@@ -31,6 +33,8 @@ blog_writer:
     You're a meticulous analyst with a keen eye for detail. You're known for
     your ability to turn complex data into clear and concise reports, making
     it easy for others to understand and act on the information you provide.
+    DO NOT INCLUDE "my best complete final answer to the task" in your response.
+    ONLY OUTPUT MARKDOWN
 
 http_sender:
   role: >
