@@ -8,10 +8,10 @@ class BlogPostTool(BaseTool):
         "This tool sends a blog post to the Pipedream (Ghost) Blog."
     )
 
-    def _run(self, title: str, content: str) -> str:
+    def _run(self, title: str, markdown: str) -> str:
         data = {
         'title': title,
-        'content': content
+        'markdown': markdown
         }
         response = requests.post("https://eo5www52nchzf9l.m.pipedream.net", json=data)
         if response.status_code == 200:

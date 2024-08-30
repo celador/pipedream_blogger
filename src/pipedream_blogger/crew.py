@@ -16,10 +16,10 @@ from crewai_tools import (
 # google_search = SerperDevTool()
 exa_client = EXASearchTool()
 blog_post_tool = BlogPostTool()
-# yc_search = WebsiteSearchTool(website='https://news.ycombinator.com')
-# blog_search = WebsiteSearchTool(website='https://pipedream.com/blog')
-# website_search = WebsiteSearchTool(website='https://pipedream.com')
-# docs_search = CodeDocsSearchTool(docs_url='https://pipedream.com/docs')
+yc_search = WebsiteSearchTool(website='https://news.ycombinator.com')
+blog_search = WebsiteSearchTool(website='https://pipedream.com/blog')
+website_search = WebsiteSearchTool(website='https://pipedream.com')
+docs_search = CodeDocsSearchTool(docs_url='https://pipedream.com/docs')
 
 # blog_urls = [
 # 	'https://pipedream.com/blog/2fa/',
@@ -141,7 +141,7 @@ class PipedreamBloggerCrew():
 	def researcher(self) -> Agent:
 		return Agent(
 			config=self.agents_config['researcher'],
-			tools=[exa_client],
+			tools=[exa_client, yc_search],
 			verbose=True
 		)
 
@@ -149,7 +149,7 @@ class PipedreamBloggerCrew():
 	def pipedream_expert(self) -> Agent:
 		return Agent(
 			config=self.agents_config['pipedream_expert'],
-			tools=[exa_client],
+			tools=[exa_client, blog_search, website_search, docs_search],
 			verbose=True
 		)
 
@@ -157,7 +157,7 @@ class PipedreamBloggerCrew():
 	def blog_writer(self) -> Agent:
 		return Agent(
 			config=self.agents_config['blog_writer'],
-			tools=[exa_client],
+			tools=[exa_client, docs_search],
 			verbose=True
 		)
 
@@ -196,7 +196,7 @@ class PipedreamBloggerCrew():
 			config=self.tasks_config['http_task'],
 			input_mapping=lambda inputs: {
 				'title': inputs['title'],
-				'content': inputs['content'],
+				'markdown': inputs['markdown'],
 			}
 	)
 
@@ -208,7 +208,7 @@ class PipedreamBloggerCrew():
 			agents=self.agents, # Automatically created by the @agent decorator
 			tasks=self.tasks, # Automatically created by the @task decorator
 			process=Process.sequential,
-			memory=False,
+			memory=True,
 			verbose=True,
    		planning=True,
 			max_rpm="600"
