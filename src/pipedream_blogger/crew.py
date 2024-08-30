@@ -131,9 +131,9 @@ yc_search = WebsiteSearchTool(website='https://news.ycombinator.com')
 
 pipedream_searchers = []
 
-for url in [*blog_urls, *website_urls]:
-    pipedream_searchers.append(WebsiteSearchTool(website=url))
-    time.sleep(0.1)  # Sleep for 1 second between initializing each searcher
+# for url in [*blog_urls, *website_urls]:
+#     pipedream_searchers.append(WebsiteSearchTool(website=url))
+#     time.sleep(0.1)  # Sleep for 1 second between initializing each searcher
 
 docs_search = CodeDocsSearchTool(docs_url='https://pipedream.com/docs')
 
