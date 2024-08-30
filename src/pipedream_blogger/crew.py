@@ -11,12 +11,12 @@ from pipedream_blogger.tools.format_tool import FormatTool
 
 # Importing crewAI tools
 from crewai_tools import (
-    WebsiteSearchTool, # Pipedream Website Search Tool
-    CodeDocsSearchTool, # Docs Search Tool
-    SerperDevTool, # General Search Tool
+    # WebsiteSearchTool, # Pipedream Website Search Tool
+    # CodeDocsSearchTool, # Docs Search Tool
+    # SerperDevTool, # General Search Tool
 		EXASearchTool,
-	  DallETool,
-   	tool,
+	  # DallETool,
+   	# tool,
 )
 
 # Initialize the tool for internet searching capabilities
@@ -124,9 +124,9 @@ website_urls = [
 	"https://pipedream.com/dpa",
 ]
 
-google_search = SerperDevTool()
+# google_search = SerperDevTool()
 
-yc_search = WebsiteSearchTool(website='https://news.ycombinator.com')
+# yc_search = WebsiteSearchTool(website='https://news.ycombinator.com')
 # create an array of website search tools for each of the website_urls
 
 pipedream_searchers = []
@@ -135,7 +135,7 @@ pipedream_searchers = []
 #     pipedream_searchers.append(WebsiteSearchTool(website=url))
 #     time.sleep(0.1)  # Sleep for 1 second between initializing each searcher
 
-docs_search = CodeDocsSearchTool(docs_url='https://pipedream.com/docs')
+# docs_search = CodeDocsSearchTool(docs_url='https://pipedream.com/docs')
 
 @CrewBase
 class PipedreamBloggerCrew():
@@ -148,7 +148,7 @@ class PipedreamBloggerCrew():
 		return Agent(
 			config=self.agents_config['researcher'],
 			# tools=[MyCustomTool()], # Example of custom tool, loaded on the beginning of file
-			tools=[exa_client, yc_search],
+			tools=[exa_client],
 			verbose=True
 		)
 
@@ -156,7 +156,7 @@ class PipedreamBloggerCrew():
 	def pipedream_expert(self) -> Agent:
 		return Agent(
 			config=self.agents_config['pipedream_expert'],
-			tools=[docs_search, *pipedream_searchers],
+			tools=[exa_client],
 			verbose=True
 		)
 
@@ -164,7 +164,7 @@ class PipedreamBloggerCrew():
 	def blog_writer(self) -> Agent:
 		return Agent(
 			config=self.agents_config['blog_writer'],
-			tools=[google_search, exa_client, docs_search, *pipedream_searchers],
+			tools=[exa_client],
 			verbose=True
 		)
 
